@@ -1,4 +1,4 @@
-/node_modules
-/photo_proofing_app/public/Images/AlbumCovers/*
-/photo_proofing_app/public/Images/Photos/*
-/photo_proofing_app/public/Images/ProfileImages/*
+**/node_modules
+**/AlbumCovers/*
+**/Photos/*
+**/ProfileImages/*
