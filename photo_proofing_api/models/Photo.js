@@ -5,22 +5,15 @@ const PhotoSchema = new mongoose.Schema(
     name: {
       type: String,
       trim: true,
-    },
-    tags: {
-      type: Array,
-      trim: true,
-    },
-    description: {
-      type: String,
-      trim: true,
+      minlength: 2,
+      maxlength: 100,
+      required: true,
     },
     watermark: {
       type: String,
       trim: true,
-    },
-    watermarked: {
-      type: Boolean,
-      default: true,
+      minlength: 2,
+      maxlength: 103,
     },
     createdAt: {
       type: Date,
@@ -30,23 +23,32 @@ const PhotoSchema = new mongoose.Schema(
     updatedAt: {
       type: Date,
     },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     album: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Album",
     },
-    like: [
-      {
+    customers: {
+      type: Array,
+      default: [],
+      customers: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+        like: {
+          type: Boolean,
+          default: false,
+        },
+        watermarked: {
+          type: Boolean,
+          default: true,
+        },
       },
-    ],
+    },
   },
   { collection: "Photo" }
 );
-
-PhotoSchema.pre("save", function (next) {
-  this.updatedAt = Date.now();
-  next();
-});
 
 module.exports = mongoose.model("Photo", PhotoSchema);

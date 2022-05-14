@@ -4,29 +4,24 @@ const AlbumSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
       trim: true,
-      unique: true,
       minlength: 2,
       maxlength: 50,
+      required: true,
     },
     description: {
       type: String,
-      required: true,
       trim: true,
-      minlength: 10,
       maxlength: 500,
     },
     tags: {
       type: Array,
-      required: true,
       trim: true,
-      default: [],
+      required: true,
     },
     cover: {
       type: String,
       trim: true,
-      default: "albumCover.jpg",
       minlength: 2,
       maxlength: 200,
     },
@@ -48,12 +43,6 @@ const AlbumSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    photos: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Photo",
-      },
-    ],
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -64,6 +53,7 @@ const AlbumSchema = new mongoose.Schema(
 
 AlbumSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
+  this.tags = this.tags[0].replace(/\s/g, "").split(","); //Tar bort whitespace och splittar på kommatecken;
   next();
 });
 

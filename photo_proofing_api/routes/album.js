@@ -1,8 +1,6 @@
 const express = require("express"); // Express web server framework
 const router = express.Router(); // Router för express
 const Album = require("../models/Album"); // Album model
-const bcrypt = require("bcryptjs"); // Bcrypt
-const jwt = require("jsonwebtoken"); // JSON web token
 const verify = require("../verifyToken"); // Verify token
 const { createAlbumValidation } = require("../validation"); // Validering
 
@@ -55,12 +53,12 @@ router.post("/", async (req, res) => {
   const album = new Album({
     name: req.body.name,
     description: req.body.description,
-    tags: req.body.tags.replace(/\s/g, "").split(","), //Tar bort whitespace och splittar på kommatecken
+    tags: req.body.tags,
     cover: req.body.cover,
     owner: req.body.owner,
   });
+
   try {
-    console.log(album);
     const newAlbum = await album.save();
     res.status(200).json({ Created: newAlbum._id });
   } catch (err) {
@@ -71,8 +69,9 @@ router.post("/", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    const album = await Album.findById(req.params.id);
-    await album.remove();
+    await Album.deleteOne({
+      _id: req.params.id,
+    });
     res.json({ Removed: req.params.id });
   } catch (err) {
     res.status(500).json({ error: err.message }); // Om något går fel
@@ -81,14 +80,39 @@ router.delete("/:id", async (req, res) => {
 
 router.patch("/:id", async (req, res) => {
   try {
+    if (req.files) {
+      //Upload Album Cover
+      if (req.body.cover) {
+        const file = req.files.file;
+        file.mv(
+          `${__dirname}/../../photo_proofing_app/public/Images/AlbumCovers/${req.body.cover}`,
+          async (err) => {
+            if (err) {
+              return res.status(500).json({ Error: err });
+            }
+          }
+        );
+      } else {
+        //if not array
+        const file = req.files.file;
+        file.mv(
+          `${__dirname}/../../photo_proofing_app/public/Images/Photos/${req.body.fileName}`,
+          async (err) => {
+            if (err) {
+              return res.status(500).json({ Error: err });
+            }
+          }
+        );
+      }
+    }
     const album = await Album.findById(req.params.id);
-    album.name = req.body.name;
-    album.description = req.body.description;
-    album.tags = req.body.tags;
-    album.cover = req.body.cover;
-    album.owner = req.body.owner;
-    album.invites = req.body.invites;
-    album.photos = req.body.photos;
+    req.body.name ? (album.name = req.body.name) : null;
+    req.body.description ? (album.description = req.body.description) : null;
+    req.body.tags ? (album.tags = req.body.tags) : null;
+    req.body.cover ? (album.cover = req.body.cover) : null;
+    req.body.owner ? (album.owner = req.body.owner) : null;
+    req.body.invites ? (album.invites = req.body.invites) : null;
+    req.body.photos ? (album.photos = req.body.photos) : null;
     await album.save();
     res.json({ Updated: req.params.id });
   } catch (err) {

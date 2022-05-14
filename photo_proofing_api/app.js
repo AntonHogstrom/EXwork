@@ -2,6 +2,10 @@ const express = require("express"); // Express web server framework
 const mongoose = require("mongoose"); // MongoDB integration
 const cors = require("cors"); // CORS integration
 const fileUpload = require("express-fileupload"); // File upload integration
+const userRoutes = require("./routes/user");
+const albumRoutes = require("./routes/album");
+const photoRoutes = require("./routes/photo");
+
 require("dotenv").config(); // Ladda .env filen
 
 const app = express(); // Skapar en express applikation
@@ -13,13 +17,8 @@ app.use(cors()); // Tillåter alla domäner att anropa API:et
 app.use(fileUpload()); // Tillåter filuppladdning
 
 //Route middleware
-const userRoutes = require("./routes/user");
 app.use("/api/user", userRoutes);
-
-const albumRoutes = require("./routes/album");
 app.use("/api/album", albumRoutes);
-
-const photoRoutes = require("./routes/photo");
 app.use("/api/photo", photoRoutes);
 
 //Anslutning till databasen

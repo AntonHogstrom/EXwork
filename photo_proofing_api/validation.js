@@ -7,7 +7,7 @@ const registerValidation = (data) => {
       first: Joi.string().min(2).max(50).required(),
       last: Joi.string().min(2).max(50).required(),
     },
-    company: Joi.string().min(2).max(100),
+    company: Joi.string().min(0).max(100),
     email: Joi.string().min(2).max(100).required().lowercase().email(),
     password: Joi.string().min(8).max(1024).required(),
     role: Joi.string().min(2).max(100).required(),
@@ -21,9 +21,9 @@ const updateProfileValidation = (data) => {
       first: Joi.string().min(2).max(50).required(),
       last: Joi.string().min(2).max(50).required(),
     },
-    company: Joi.string().min(2).max(100),
-    bio: Joi.string().min(2).max(500),
-    profilePicture: Joi.string().min(2).max(120),
+    company: Joi.string().min(0).max(100),
+    bio: Joi.string().min(0).max(500),
+    profilePicture: Joi.string().min(0).max(120),
   });
   return schema.validate(data);
 };
@@ -49,7 +49,18 @@ const createAlbumValidation = (data) => {
   return schema.validate(data);
 };
 
+//Validering av att skapa fotografier
+const createPhotoValidation = (data) => {
+  const schema = Joi.object({
+    name: Joi.string().min(2).max(100).required(),
+    owner: Joi.string().min(2).max(200).required(),
+    album: Joi.string().min(2).max(200).required(),
+  });
+  return schema.validate(data);
+};
+
 module.exports.registerValidation = registerValidation;
 module.exports.updateProfileValidation = updateProfileValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.createAlbumValidation = createAlbumValidation;
+module.exports.createPhotoValidation = createPhotoValidation;

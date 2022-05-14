@@ -7,14 +7,12 @@ const UserSchema = new mongoose.Schema(
         type: String,
         length: [2, 50],
         required: true,
-        lowercase: true,
         trim: true,
       },
       last: {
         type: String,
         length: [2, 50],
         required: true,
-        lowercase: true,
         trim: true,
       },
     },
@@ -41,7 +39,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       length: [2, 100],
       trim: true,
-      default: "anon.png",
+      default: "anon.svg",
     },
     bio: {
       type: String,
@@ -74,8 +72,8 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["photographer", "customer", "admin"],
-      default: "customer",
+      enum: ["Photographer", "Customer", "Admin"],
+      default: "Customer",
     },
     invites: [
       {
@@ -96,6 +94,15 @@ const UserSchema = new mongoose.Schema(
 //Sätter updatedAt vid updatering
 UserSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
+
+  //Sätter första bokstav till stor och resten till liten bokstav
+  this.name.first =
+    this.name.first.charAt(0).toUpperCase() +
+    this.name.first.slice(1).toLowerCase();
+  this.name.last =
+    this.name.last.charAt(0).toUpperCase() +
+    this.name.last.slice(1).toLowerCase();
+
   next();
 });
 

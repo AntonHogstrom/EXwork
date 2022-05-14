@@ -94,21 +94,22 @@ router.patch("/:id", verify, async (req, res) => {
         }
       );
     }
-
-    const updatedUser = await User.updateOne(
-      { _id: req.params.id },
-      {
-        $set: {
-          name: {
-            first: req.body.first,
-            last: req.body.last,
-          },
-          company: req.body.company,
-          bio: req.body.bio,
-          profilePicture: req.body.profilePicture,
-        },
-      }
-    );
+    const updateUser = await User.findById(req.params.id);
+    req.body.name && req.body.name.first
+      ? (updateUser.name.first = req.body.name.first)
+      : null;
+    req.body.name && req.body.name.last
+      ? (updateUser.name.last = req.body.name.last)
+      : null;
+    req.body.company ? (updateUser.company = req.body.company) : null;
+    req.body.bio ? (updateUser.bio = req.body.bio) : null;
+    req.body.email ? (updateUser.email = req.body.email) : null;
+    req.body.password ? (updateUser.password = req.body.password) : null;
+    req.body.role ? (updateUser.role = req.body.role) : null;
+    req.body.profilePicture
+      ? (updateUser.profilePicture = req.body.profilePicture)
+      : null;
+    const updatedUser = await updateUser.save();
     res.status(200).json(updatedUser);
   } catch (err) {
     res.status(500).json({ error: err.message });
